@@ -35,15 +35,17 @@ description: read lidar data given
 input: lidar bin path "path", cam 3D to cam 2D image matrix (4,4), lidar 3D to cam 3D matrix (4,4)
 output: valid points in lidar coordinates (PointsNum,4)
 """
-def read_velodyne(path, P, vtc_mat,IfReduce=True):
+# modify IFREDUCE DEFAULT
+def read_velodyne(path, P, vtc_mat,IfReduce=False):
     max_row = 374  # y
     max_col = 1241  # x
     lidar = np.fromfile(path, dtype=np.float32).reshape((-1, 4))
+
     if not IfReduce:
         return lidar
 
-    # mask = lidar[:, 0] > 0
-    # lidar = lidar[mask]
+    mask = lidar[:, 0] > 0
+    lidar = lidar[mask]
     lidar_copy = np.zeros(shape=lidar.shape)
     lidar_copy[:, :] = lidar[:, :]
 
@@ -59,7 +61,8 @@ def read_velodyne(path, P, vtc_mat,IfReduce=True):
     lidar_copy[:, 0:3] = lidar
     x, y = img_pts[:, 0] / img_pts[:, 2], img_pts[:, 1] / img_pts[:, 2]
     mask = np.logical_and(np.logical_and(x >= 0, x < max_col), np.logical_and(y >= 0, y < max_row))
-    return lidar_copy
+
+    return lidar_copy[mask]
     # return lidar_copy[mask]
 
 

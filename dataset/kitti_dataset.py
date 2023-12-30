@@ -37,13 +37,13 @@ class KittiDetectionDataset:
         return P2,V2C,points,image,labels,label_names
 
 class KittiTrackingDataset:
-    def __init__(self,root_path,seq_id,label_path=None):
+    def __init__(self,root_path,seq_id,box_type, label_path=None):
         self.seq_name = str(seq_id).zfill(4)
         self.root_path = root_path
         self.velo_path = os.path.join(self.root_path,"velodyne",self.seq_name)
         self.image_path = os.path.join(self.root_path,"image_02",self.seq_name)
         self.calib_path = os.path.join(self.root_path,"calib",self.seq_name)
-
+        self.box_type = box_type
 
 
         self.all_ids = os.listdir(self.velo_path)
@@ -73,7 +73,9 @@ class KittiTrackingDataset:
         if item in self.labels.keys():
             labels = self.labels[item]
             labels = np.array(labels)
-            # labels[:,3:6] = cam_to_velo(labels[:,3:6],self.V2C)[:,:3]
+            # todo
+            if(not self.box_type == "Philly"):
+                labels[:,3:6] = cam_to_velo(labels[:,3:6],self.V2C)[:,:3]
             label_names = self.label_names[item]
             label_names = np.array(label_names)
         else:

@@ -11,12 +11,12 @@ def convert_box_type(boxes,input_box_type = 'Kitti'):
     boxes = np.array(boxes)
     if len(boxes) == 0:
         return None
-    assert  input_box_type in ["Kitti","OpenPCDet","Waymo"], 'unsupported input box type!'
+    assert  input_box_type in ["Kitti","OpenPCDet","Waymo", "Philly"], 'unsupported input box type!'
 
     if input_box_type in ["OpenPCDet","Waymo"]:
         return boxes
 
-    if input_box_type == "Kitti": #(h,w,l,x,y,z,yaw) -> (x,y,z,l,w,h,yaw)
+    if input_box_type == "Philly": #(h,w,l,x,y,z,yaw) -> (x,y,z,l,w,h,yaw)
         boxes = np.array(boxes)
         new_boxes = np.zeros(shape=boxes.shape)
         new_boxes[:,:]=boxes[:,:]
@@ -28,6 +28,18 @@ def convert_box_type(boxes,input_box_type = 'Kitti'):
         # new_boxes[:, 6] = (np.pi - boxes[:, 6]) + np.pi / 2
         # new_boxes[:, 2] += boxes[:, 0] / 2
         
+        return new_boxes
+    
+    elif input_box_type == "Kitti": #(h,w,l,x,y,z,yaw) -> (x,y,z,l,w,h,yaw)
+        boxes = np.array(boxes)
+        new_boxes = np.zeros(shape=boxes.shape)
+        new_boxes[:,:]=boxes[:,:]
+        new_boxes[:,0:3] = boxes[:,3:6]
+        new_boxes[:, 3] = boxes[:, 2]
+        new_boxes[:, 4] = boxes[:, 1]
+        new_boxes[:, 5] = boxes[:, 0]
+        new_boxes[:, 6] = (np.pi - boxes[:, 6]) + np.pi / 2
+        new_boxes[:, 2] += boxes[:, 0] / 2
         return new_boxes
 
 def get_mesh_boxes(boxes,colors="red",
