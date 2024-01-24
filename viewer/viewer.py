@@ -202,7 +202,6 @@ class Viewer:
         
         if boxes is None:
             return
-
         if ids is not None:
             colors = generate_objects_colors(ids,self.objects_color_map)
         else:
