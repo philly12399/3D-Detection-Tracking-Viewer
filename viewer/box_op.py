@@ -8,15 +8,16 @@ def convert_box_type(boxes,input_box_type = 'Kitti'):
     :param input_box_type: (str), input box type
     :return: new boxes with box type [x,y,z,l,w,h,yaw]
     """
+    input_box_type = input_box_type.lower()
     boxes = np.array(boxes)
     if len(boxes) == 0:
         return None
-    assert  input_box_type in ["Kitti","OpenPCDet","Waymo", "Philly"], 'unsupported input box type!'
+    # assert  input_box_type in ["Kitti","OpenPCDet","Waymo", "Philly"], 'unsupported input box type!'
 
-    if input_box_type in ["OpenPCDet","Waymo"]:
+    if input_box_type in ["openpcdet","waymo"]:
         return boxes
 
-    if input_box_type == "Philly": #(l,w,h,x,y,z,yaw) -> (x,y,z,l,w,h,yaw)
+    if input_box_type == "philly": #(l,w,h,x,y,z,yaw) -> (x,y,z,l,w,h,yaw)
         boxes = np.array(boxes)
         new_boxes = np.zeros(shape=boxes.shape)
         new_boxes[:,:]=boxes[:,:]
@@ -30,7 +31,7 @@ def convert_box_type(boxes,input_box_type = 'Kitti'):
         
         return new_boxes
     
-    elif input_box_type == "Kitti": #(h,w,l,x,y,z,yaw) -> (x,y,z,l,w,h,yaw)
+    elif input_box_type == "kitti": #(h,w,l,x,y,z,yaw) -> (x,y,z,l,w,h,yaw)
         boxes = np.array(boxes)
         new_boxes = np.zeros(shape=boxes.shape)
         new_boxes[:,:]=boxes[:,:]

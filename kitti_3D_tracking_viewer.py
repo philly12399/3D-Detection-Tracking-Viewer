@@ -9,7 +9,7 @@ import click
     "--data_root",
     "-d",
     type=str,
-    default="/home/philly12399/philly_data/pingtung-tracking-val/val/kitti-format/tracktest/",
+    default="/home/philly12399/philly_data/KITTI_tracking/training/",
     help="Path of kitti-track dataset root",
 )
 @click.option(
@@ -27,11 +27,23 @@ import click
     default="Philly",
     help="bbox format {Kitti, OpenPCDet, Waymo, Philly}",
 )
-def kitti_viewer(data_root, seq, box_type):
+
+@click.option(
+    "--label_name",
+    "-l",
+    type=str ,
+    default="",
+    help="Path of label",
+)
+def kitti_viewer(data_root, seq, box_type, label_name):
     # root="/home/philly12399/nas/homes/arthur_data/KITTI_tracking/training/"
     # label_path = r"/home/philly12399/nas/homes/arthur_data/KITTI_tracking/training/label_02/0001.txt"
     # data_root = "/home/philly12399/philly_data/pingtung-tracking-val/val/kitti-format/tracktest/"
-    label_path = os.path.join(data_root, "label_02/" + str(seq).zfill(4)+".txt")
+    if(label_name == ""):
+        label_path = os.path.join(data_root, "label_02", str(seq).zfill(4)+".txt")
+    else:
+        label_path = os.path.join(data_root, "label_02", label_name)
+        
     # label_path = os.path.join(data_root, "label_02/" + "track.txt")
     
     dataset = KittiTrackingDataset(data_root, seq_id=seq, box_type = box_type, label_path=label_path )
@@ -42,9 +54,10 @@ def kitti_viewer(data_root, seq, box_type):
         print("Frame: ",i)
         P2, V2C, points, image, labels, label_names = dataset[i]
 
-
         if labels is not None:           
-            mask = (label_names!="DontCare")
+            # mask = (label_names!="DontCare")
+            mask = (label_names=="Car")
+            
             labels = labels[mask]
             label_names = label_names[mask]
             vi.add_3D_boxes(labels, ids=labels[:, -1].astype(int), box_info=label_names,caption_size=(0.05,0.05))
