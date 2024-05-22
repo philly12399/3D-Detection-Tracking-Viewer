@@ -62,10 +62,13 @@ class KittiTrackingDataset:
     def __getitem__(self, item):
 
         name = str(item).zfill(6)
-
         velo_path = os.path.join(self.velo_path,name+'.bin')
         image_path = os.path.join(self.image_path, name+'.png')
-        points = read_velodyne(velo_path,self.P2,self.V2C)
+        try:
+            points = read_velodyne(velo_path,self.P2,self.V2C)
+        except:
+            print("no velodyne this frame")
+            points = np.array([0,0,0,0], dtype=np.float32).reshape((1, 4))
         try:
             image = read_image(image_path)
         except:

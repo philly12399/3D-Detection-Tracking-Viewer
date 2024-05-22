@@ -24,7 +24,7 @@ import click
     "--box_type",
     "-b",
     type=str ,
-    default="Philly",
+    default="Kitti",
     help="bbox format {Kitti, OpenPCDet, Waymo, Philly}",
 )
 
@@ -50,13 +50,13 @@ def kitti_viewer(data_root, seq, box_type, label_name):
 
     vi = Viewer(box_type= box_type)
 
-    for i in range(len(dataset)):
+    for i in range(175,len(dataset)):
         print("Frame: ",i)
         P2, V2C, points, image, labels, label_names = dataset[i]
 
         if labels is not None:           
             # mask = (label_names!="DontCare")
-            mask = (label_names=="Car")
+            mask = np.isin(label_names, ["Car", "Van", "Cyclist", "Truck"])
             
             labels = labels[mask]
             label_names = label_names[mask]
