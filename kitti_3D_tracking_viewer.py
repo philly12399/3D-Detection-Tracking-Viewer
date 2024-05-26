@@ -16,7 +16,7 @@ import click
     "--seq",
     "-s",
     type=int ,
-    default="4",
+    default="0",
 
     help="Path of sv episodes",
 )
@@ -27,7 +27,13 @@ import click
     default="Kitti",
     help="bbox format {Kitti, OpenPCDet, Waymo, Philly}",
 )
-
+@click.option(
+    "--label_root",
+    "-r",
+    type=str ,
+    default="",
+    help="Path of label root",
+)
 @click.option(
     "--label_name",
     "-l",
@@ -35,14 +41,15 @@ import click
     default="",
     help="Path of label",
 )
-def kitti_viewer(data_root, seq, box_type, label_name):
+def kitti_viewer(data_root, seq, box_type, label_root, label_name):
     # root="/home/philly12399/nas/homes/arthur_data/KITTI_tracking/training/"
     # label_path = r"/home/philly12399/nas/homes/arthur_data/KITTI_tracking/training/label_02/0001.txt"
     # data_root = "/home/philly12399/philly_data/pingtung-tracking-val/val/kitti-format/tracktest/"
+    if(label_root == ""):
+        label_root = os.path.join(data_root,"label_02")
     if(label_name == ""):
-        label_path = os.path.join(data_root, "label_02", str(seq).zfill(4)+".txt")
-    else:
-        label_path = os.path.join(data_root, "label_02", label_name)
+        label_name = str(seq).zfill(4)+".txt"
+    label_path = os.path.join(label_root, label_name)
         
     # label_path = os.path.join(data_root, "label_02/" + "track.txt")
     
@@ -50,13 +57,15 @@ def kitti_viewer(data_root, seq, box_type, label_name):
 
     vi = Viewer(box_type= box_type)
 
-    for i in range(175,len(dataset)):
+    for i in range(len(dataset)):
         print("Frame: ",i)
         P2, V2C, points, image, labels, label_names = dataset[i]
-
+        cls_list = ["Car"]
+        # cls_list = ["Cyclist"]
+        
         if labels is not None:           
             # mask = (label_names!="DontCare")
-            mask = np.isin(label_names, ["Car", "Van", "Cyclist", "Truck"])
+            mask = np.isin(label_names, cls_list)
             
             labels = labels[mask]
             label_names = label_names[mask]

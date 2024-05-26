@@ -53,7 +53,7 @@ class KittiTrackingDataset:
 
             label_path = os.path.join(self.root_path, "label_02", self.seq_name+'.txt')
 
-
+        print(label_path)
         self.P2, self.V2C = read_calib(calib_path)
         self.labels, self.label_names = read_tracking_label(label_path)
 
