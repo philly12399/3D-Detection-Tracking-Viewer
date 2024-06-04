@@ -172,7 +172,8 @@ class Viewer:
                      show_box_info=True,
                      del_after_show=True,
                      add_to_2D_scene=True,
-                     caption_size=(0.05,0.05)
+                     caption_size=(0.05,0.05),
+                     my_color=None
                      ):
         """
         add the boxes actor to viewer
@@ -200,12 +201,17 @@ class Viewer:
             return
         boxes= convert_box_type(boxes,self.box_type)
         
+        
         if boxes is None:
             return
-        if ids is not None:
+        if(my_color is not None):
+            colors = my_color
+        elif ids is not None:
             colors = generate_objects_colors(ids,self.objects_color_map)
         else:
             colors = color
+
+
 
         if add_to_2D_scene:
             self.boxes_info.append((boxes,ids,colors,box_info))

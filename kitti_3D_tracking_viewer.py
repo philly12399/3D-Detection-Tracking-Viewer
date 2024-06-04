@@ -50,7 +50,7 @@ def kitti_viewer(data_root, seq, box_type, label_root, label_name):
     if(label_name == ""):
         label_name = str(seq).zfill(4)+".txt"
     label_path = os.path.join(label_root, label_name)
-        
+    COLOR_BY_CLS = True
     # label_path = os.path.join(data_root, "label_02/" + "track.txt")
     
     dataset = KittiTrackingDataset(data_root, seq_id=seq, box_type = box_type, label_path=label_path )
@@ -60,7 +60,8 @@ def kitti_viewer(data_root, seq, box_type, label_root, label_name):
     for i in range(len(dataset)):
         print("Frame: ",i)
         P2, V2C, points, image, labels, label_names = dataset[i]
-        cls_list = ["Car"]
+        cls_list = ["Car","Cyclist","FilteredCar","FilteredCyclist"]
+        color_list = {"Car":[0,0,255],"Cyclist":[0,255,0],"FilteredCar":[255,0,0],"FilteredCyclist":[255,0,0]}
         # cls_list = ["Cyclist"]
         
         if labels is not None:           
@@ -69,7 +70,11 @@ def kitti_viewer(data_root, seq, box_type, label_root, label_name):
             
             labels = labels[mask]
             label_names = label_names[mask]
-            vi.add_3D_boxes(labels, ids=labels[:, -1].astype(int), box_info=label_names,caption_size=(0.05,0.05))
+            if(COLOR_BY_CLS):
+                colors = [color_list[label_names[i]] for i in range(len(label_names))]
+                vi.add_3D_boxes(labels, ids=labels[:, -1].astype(int), box_info=label_names,caption_size=(0.05,0.05),my_color=colors)
+            else:
+                vi.add_3D_boxes(labels, ids=labels[:, -1].astype(int), box_info=label_names,caption_size=(0.05,0.05))
             # vi.add_3D_cars(labels, ids=labels[:, -1].astype(int), mesh_alpha=1)
         vi.add_points(points[:,:3])
         
