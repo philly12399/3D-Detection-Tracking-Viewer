@@ -37,14 +37,13 @@ class KittiDetectionDataset:
         return P2,V2C,points,image,labels,label_names
 
 class KittiTrackingDataset:
-    def __init__(self,root_path,seq_id,box_type, label_path=None, drop_rate=0.0):
+    def __init__(self,root_path,seq_id,box_type, label_path=None):
         self.seq_name = str(seq_id).zfill(4)
         self.root_path = root_path
         self.velo_path = os.path.join(self.root_path,"velodyne",self.seq_name)
         self.image_path = os.path.join(self.root_path,"image_02",self.seq_name)
         self.calib_path = os.path.join(self.root_path,"calib",self.seq_name)
         self.box_type = box_type
-        self.drop_rate = drop_rate
 
         self.all_ids = os.listdir(self.velo_path)
         calib_path = self.calib_path + '.txt'
@@ -66,11 +65,7 @@ class KittiTrackingDataset:
         image_path = os.path.join(self.image_path, name+'.png')
         try:
             points = read_velodyne(velo_path,self.P2,self.V2C)
-            if(self.drop_rate>0):  
-                num=len(points)      
-                sample_num=int(num*(1-self.drop_rate))        
-                indices = np.random.shuffle(points)
-                points = points[:sample_num]                
+                      
         except:
             print("no velodyne this frame")
             points = np.array([0,0,0,0], dtype=np.float32).reshape((1, 4))

@@ -3,13 +3,15 @@ import numpy as np
 from dataset.kitti_dataset import KittiTrackingDataset
 import os
 import click
+from tqdm import tqdm
+
 @click.command()
 ### Add your options here
 @click.option(
     "--data_root",
     "-d",
     type=str,
-    default="/home/philly12399/philly_data/KITTI_tracking/training/",
+    default="/home/philly12399/philly_ssd/KITTI_tracking/training/",
     help="Path of kitti-track dataset root",
 )
 @click.option(
@@ -48,14 +50,7 @@ import click
     default=False,
     help="color_by_cls(true) or color by trkid(false)",
 )
-@click.option(
-    "--droprate",
-    "-drop",
-    type=float ,
-    default=0.0,
-    help="pcd drop rate for vis",
-)
-def kitti_viewer(data_root, seq, box_type, label_root, label_name,color_by_cls,droprate):
+def kitti_viewer(data_root, seq, box_type, label_root, label_name,color_by_cls):
     # root="/home/philly12399/nas/homes/arthur_data/KITTI_tracking/training/"
     # label_path = r"/home/philly12399/nas/homes/arthur_data/KITTI_tracking/training/label_02/0001.txt"
     # data_root = "/home/philly12399/philly_data/pingtung-tracking-val/val/kitti-format/tracktest/"
@@ -68,12 +63,12 @@ def kitti_viewer(data_root, seq, box_type, label_root, label_name,color_by_cls,d
     # COLOR_BY_CLS = False
     # label_path = os.path.join(data_root, "label_02/" + "track.txt")
     
-    dataset = KittiTrackingDataset(data_root, seq_id=seq, box_type = box_type, label_path=label_path, drop_rate=droprate )
+    dataset = KittiTrackingDataset(data_root, seq_id=seq, box_type = box_type, label_path=label_path)
 
     vi = Viewer(box_type= box_type)
-
-    for i in range(len(dataset)):
-        print("Frame: ",i)
+    
+    for i in tqdm(range(len(dataset))):
+        # print("Frame: ",i)
         P2, V2C, points, image, labels, label_names = dataset[i]
         cls_list = ["Car","Cyclist","FilteredCar","FilteredCyclist"]
         color_list = {"Car":[0,0,255],"Cyclist":[0,255,0],"FilteredCar":[255,0,0],"FilteredCyclist":[255,0,0]}
