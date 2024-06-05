@@ -41,19 +41,34 @@ import click
     default="",
     help="Path of label",
 )
-def kitti_viewer(data_root, seq, box_type, label_root, label_name):
+@click.option(
+    "--color_by_cls",
+    "-c",
+    type=bool ,
+    default=False,
+    help="color_by_cls(true) or color by trkid(false)",
+)
+@click.option(
+    "--droprate",
+    "-drop",
+    type=float ,
+    default=0.0,
+    help="pcd drop rate for vis",
+)
+def kitti_viewer(data_root, seq, box_type, label_root, label_name,color_by_cls,droprate):
     # root="/home/philly12399/nas/homes/arthur_data/KITTI_tracking/training/"
     # label_path = r"/home/philly12399/nas/homes/arthur_data/KITTI_tracking/training/label_02/0001.txt"
     # data_root = "/home/philly12399/philly_data/pingtung-tracking-val/val/kitti-format/tracktest/"
+    np.random.seed(0)
     if(label_root == ""):
         label_root = os.path.join(data_root,"label_02")
     if(label_name == ""):
         label_name = str(seq).zfill(4)+".txt"
     label_path = os.path.join(label_root, label_name)
-    COLOR_BY_CLS = True
+    # COLOR_BY_CLS = False
     # label_path = os.path.join(data_root, "label_02/" + "track.txt")
     
-    dataset = KittiTrackingDataset(data_root, seq_id=seq, box_type = box_type, label_path=label_path )
+    dataset = KittiTrackingDataset(data_root, seq_id=seq, box_type = box_type, label_path=label_path, drop_rate=droprate )
 
     vi = Viewer(box_type= box_type)
 
@@ -70,7 +85,7 @@ def kitti_viewer(data_root, seq, box_type, label_root, label_name):
             
             labels = labels[mask]
             label_names = label_names[mask]
-            if(COLOR_BY_CLS):
+            if(color_by_cls):
                 colors = [color_list[label_names[i]] for i in range(len(label_names))]
                 vi.add_3D_boxes(labels, ids=labels[:, -1].astype(int), box_info=label_names,caption_size=(0.05,0.05),my_color=colors)
             else:
