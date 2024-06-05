@@ -50,11 +50,17 @@ from tqdm import tqdm
     default=False,
     help="color_by_cls(true) or color by trkid(false)",
 )
-def kitti_viewer(data_root, seq, box_type, label_root, label_name,color_by_cls):
+@click.option(
+    "--start",
+    "-start",
+    type=int ,
+    default=0,
+    help="start index",
+)
+def kitti_viewer(data_root, seq, box_type, label_root, label_name,color_by_cls,start):
     # root="/home/philly12399/nas/homes/arthur_data/KITTI_tracking/training/"
     # label_path = r"/home/philly12399/nas/homes/arthur_data/KITTI_tracking/training/label_02/0001.txt"
     # data_root = "/home/philly12399/philly_data/pingtung-tracking-val/val/kitti-format/tracktest/"
-    np.random.seed(0)
     if(label_root == ""):
         label_root = os.path.join(data_root,"label_02")
     if(label_name == ""):
@@ -67,7 +73,7 @@ def kitti_viewer(data_root, seq, box_type, label_root, label_name,color_by_cls):
 
     vi = Viewer(box_type= box_type)
     
-    for i in tqdm(range(len(dataset))):
+    for i in tqdm(range(start,len(dataset))):
         # print("Frame: ",i)
         P2, V2C, points, image, labels, label_names = dataset[i]
         cls_list = ["Car","Cyclist","FilteredCar","FilteredCyclist"]
