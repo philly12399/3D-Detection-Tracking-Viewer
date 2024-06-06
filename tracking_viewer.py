@@ -73,8 +73,9 @@ def kitti_viewer(data_root, seq, box_type, label_root, label_name,color_by_cls,s
 
     vi = Viewer(box_type= box_type)
     
-    for i in tqdm(range(start,len(dataset))):
-        # print("Frame: ",i)
+    # for i in tqdm(range(start,len(dataset))):
+    for i in range(start,len(dataset)):    
+        print("Frame: ",i)
         P2, V2C, points, image, labels, label_names = dataset[i]
         cls_list = ["Car","Cyclist","FilteredCar","FilteredCyclist"]
         color_list = {"Car":[0,0,255],"Cyclist":[0,255,0],"FilteredCar":[255,0,0],"FilteredCyclist":[255,0,0]}
