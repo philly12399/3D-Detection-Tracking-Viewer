@@ -77,7 +77,7 @@ class KittiTrackingDataset:
             labels = self.labels[item]
             labels = np.array(labels)
             # todo
-            if(not self.box_type == "Philly"):
+            if(not self.box_type.lower() == "philly"):
                 labels[:,3:6] = cam_to_velo(labels[:,3:6],self.V2C)[:,:3]
             label_names = self.label_names[item]
             label_names = np.array(label_names)

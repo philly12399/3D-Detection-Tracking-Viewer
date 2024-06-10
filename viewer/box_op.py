@@ -17,7 +17,7 @@ def convert_box_type(boxes,input_box_type = 'Kitti'):
     if input_box_type in ["openpcdet","waymo"]:
         return boxes
 
-    if input_box_type == "philly": #(l,w,h,x,y,z,yaw) -> (x,y,z,l,w,h,yaw)
+    if input_box_type.lower() == "philly": #(l,w,h,x,y,z,yaw) -> (x,y,z,l,w,h,yaw)
         boxes = np.array(boxes)
         new_boxes = np.zeros(shape=boxes.shape)
         new_boxes[:,:]=boxes[:,:]
